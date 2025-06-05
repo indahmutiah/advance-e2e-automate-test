@@ -24,7 +24,7 @@ describe("Test amazon", async function () {
       )
       .invoke("text")
       .then((text) => {
-        const priceNoDecimal = text.replace(/[^\d]/g, "").slice(0, -2); // Buang 2 digit belakang
+        const priceNoDecimal = text.replace(/[^\d]/g, "").slice(0, -2);
         cy.wrap(priceNoDecimal).as("searchPrice");
       });
     await cy
