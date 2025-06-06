@@ -1,4 +1,3 @@
-const { should } = require("chai");
 import Agoda from "../support/pages/agoda";
 
 describe("Test Agoda", async function () {
