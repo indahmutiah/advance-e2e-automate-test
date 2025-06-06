@@ -1,0 +1,18 @@
+{
+  "firstName": "Indah Mutiah Utami",
+  "lastName": "MZ",
+  "email": "indahmz@gmail.com",
+  "phone": "8123456789",
+  "dob": {
+    "day": "28",
+    "year": "1998"
+  },
+  "nationality": "Indonesia",
+  "passport": {
+    "number": "X12345678",
+    "countryOfIssue": "Indonesia",
+    "expiryDay": "28",
+    "expiryMonthIndex": 8,
+    "expiryYear": "2036"
+  }
+}

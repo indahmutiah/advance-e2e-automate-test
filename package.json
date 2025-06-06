@@ -12,5 +12,9 @@
   "dependencies": {
     "cypress": "^14.4.0",
     "cypress-xpath": "^2.0.1"
+  },
+  "devDependencies": {
+    "cypress-dotenv": "^3.0.1",
+    "dotenv": "^16.5.0"
   }
 }
