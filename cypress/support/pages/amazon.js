@@ -54,3 +54,4 @@ class Amazon {
     });
   }
 }
+export default new Amazon();

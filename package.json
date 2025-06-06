@@ -4,7 +4,10 @@
   "description": "E2E Testing with cypress to testing 3 websites",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cypress run",
+    "test:open": "cypress open",
+    "test-report": "mochawesome-merge reports/report/*.json | mochawesome-report-generator -o reports/report/mochawesome.html",
+    "test:report:json": "mochawesome-merge reports/report/*.json > reports/report/mochawesome.json"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +18,9 @@
   },
   "devDependencies": {
     "cypress-dotenv": "^3.0.1",
-    "dotenv": "^16.5.0"
+    "dotenv": "^16.5.0",
+    "mochawesome": "^7.1.3",
+    "mochawesome-merge": "^5.0.0",
+    "mochawesome-report-generator": "^6.2.0"
   }
 }
