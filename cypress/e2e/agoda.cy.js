@@ -1,3 +1,5 @@
+const { should } = require("chai");
+
 describe("Test agoda", async function () {
   it("Booking ticket for flight", async function () {
     await cy.on("uncaught:exception", (err, runnable) => {
@@ -126,57 +128,114 @@ describe("Test agoda", async function () {
       .should("be.visible")
       .click({ force: true });
 
-    await cy
-      .xpath(`//input[@data-testid="flight.forms.i0.units.i0.passportNumber"]`)
-      .type("X12345678")
-      .invoke("val")
-      .as("passportNumber");
+    // await cy
+    //   .xpath(`//input[@data-testid="flight.forms.i0.units.i0.passportNumber"]`)
+    //   .type("X12345678")
+    //   .invoke("val")
+    //   .as("passportNumber");
+
+    // await cy
+    //   .get('[data-testid="flight.forms.i0.units.i0.passportCountryOfIssue"]')
+    //   .find("button.ads-button-input")
+    //   .should("be.visible")
+    //   .click({ force: true });
+    // await cy
+    //   .get(".SearchField__SearchFieldContainer-sc-1s2srj9-0")
+    //   .type("Indonesia");
+    // await cy
+    //   .xpath(
+    //     '(//input[@type="radio" and @name="dropdown-list-item"])[1]/ancestor::label'
+    //   )
+    //   .should("be.visible")
+    //   .click({ force: true });
+    // await cy
+    //   .xpath(
+    //     `//input[@data-testid="flight.forms.i0.units.i0.passportExpiryDate-DateInputDataTestId"]`
+    //   )
+    //   .type("28");
+    // await cy
+    //   .get(
+    //     `[data-testid="flight.forms.i0.units.i0.passportExpiryDate-MonthInputDataTestId"]`
+    //   )
+    //   .click();
+    // await cy
+    //   .xpath('(//input[@name="dropdown-list-item"])[8]')
+    //   .check({ force: true });
+    // await cy
+    //   .get(
+    //     `[data-testid="flight.forms.i0.units.i0.passportExpiryDate-YearInputDataTestId"]`
+    //   )
+    //   .type("2036");
 
     await cy
-      .get('[data-testid="flight.forms.i0.units.i0.passportCountryOfIssue"]')
-      .find("button.ads-button-input")
-      .should("be.visible")
-      .click({ force: true });
-    await cy
-      .get(".SearchField__SearchFieldContainer-sc-1s2srj9-0")
-      .type("Indonesia");
-    await cy
       .xpath(
-        '(//input[@type="radio" and @name="dropdown-list-item"])[1]/ancestor::label'
+        `//dd[@data-component="mob-flight-price-total-desc"]//span[@data-component="mob-price-desc-text"]`
       )
-      .should("be.visible")
-      .click({ force: true });
-    await cy
-      .xpath(
-        `//input[@data-testid="flight.forms.i0.units.i0.passportExpiryDate-DateInputDataTestId"]`
-      )
-      .type("28");
-    await cy
-      .get(
-        `[data-testid="flight.forms.i0.units.i0.passportExpiryDate-MonthInputDataTestId"]`
-      )
-      .click();
-    await cy
-      .xpath('(//input[@name="dropdown-list-item"])[8]')
-      .check({ force: true });
-    await cy
-      .get(
-        `[data-testid="flight.forms.i0.units.i0.passportExpiryDate-YearInputDataTestId"]`
-      )
-      .type("2036");
-
-    await cy
-      .xpath(`//span[@data-component="mob-price-desc-text"]`)
       .invoke("text")
       .then((text) => {
         const cleanPrice = text.replace(/[^\d]/g, "");
         cy.wrap(cleanPrice).as("expectedPrice");
       });
-    cy.xpath(`//button[@data-component="flight-continue-to-addOns-button"]`)
+    cy.xpath('//button[@data-component="flight-continue-to-addOns-button"]')
+      .scrollIntoView()
       .should("be.visible")
-      .and("not.be.disabled")
-      .click();
+      .click({ force: true });
 
-    cy.xpath(`//h3[contains(text(),"Level")]`).should("exist");
+    cy.xpath(
+      '//button[@data-component="flight-continue-to-addOns-button"]'
+    ).should("not.exist");
+
+    cy.xpath(`//div[@data-element-value="option-BASIC"]`).click();
+    cy.xpath(`//div[@data-testid="radio-button-option-no"]`).click({
+      force: true,
+    });
+    cy.get('[data-testid="continue-to-payment-button"]').click();
+
+    cy.get('button[data-component="last-chance-decline-button"]').click();
+
+    // expect the first name and last name to be the same as the input
+    cy.get("@firstName").then((firstName) => {
+      cy.get("@lastName").then((lastName) => {
+        const fullName = `${firstName} ${lastName}`;
+
+        // Ambil teks dari strong element
+        cy.xpath(`//strong[@data-component="name-container-name"]`, {
+          timeout: 30000,
+        })
+          .should("exist")
+          .first()
+          .invoke("text")
+          .then((displayedName) => {
+            expect(displayedName.trim()).to.eq(fullName);
+          });
+      });
+    });
+    // expect the price
+    cy.get("@expectedPrice").then((expectedPrice) => {
+      const expected = parseInt(expectedPrice, 10);
+      cy.xpath(
+        `//dd[@data-component="mob-flight-price-total-desc"]//span[@data-component="mob-price-desc-text"]`,
+        {
+          timeout: 30000,
+        }
+      )
+        .invoke("text")
+        .then((actualPriceText) => {
+          const actual = parseInt(actualPriceText.replace(/[^\d]/g, ""), 10);
+          expect(actual).to.eq(expected);
+        });
+    });
+
+    // Ambil jam keberangkatan
+
+    const expectedTimeRange = `${departureTime.trim()} - ${arrivalTime.trim()}`;
+
+    // Ambil teks dari div yang ingin dibandingkan
+    cy.xpath("//div[contains(@class, 'aec39-box') and contains(text(), ' - ')]")
+      .invoke("text")
+      .then((actualTimeRange) => {
+        const cleanTime = actualTimeRange.replace(/\+\d+/, "").trim(); // hapus +1, +2, dll
+        expect(cleanTime).to.eq(expectedTimeRange);
+      });
   });
 });
